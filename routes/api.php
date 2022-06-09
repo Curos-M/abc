@@ -19,6 +19,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::get('/books', 'BooksController@index');
-Route::post('/books', 'BooksController@store');
-Route::post('/books/{id}/reviews', 'BooksReviewController@store');
-Route::delete('/books/{bookId}/reviews/{reviewId}', 'BooksReviewController@destroy');
+Route::group(['middleware' => ['auth']], function() {
+  Route::group(['middleware' => ['auth.admin']], function() {
+    Route::post('/books', 'BooksController@store');
+    Route::delete('/books/{bookId}/reviews/{reviewId}', 'BooksReviewController@destroy');
+  });
+  Route::post('/books/{id}/reviews', 'BooksReviewController@store');
+});
